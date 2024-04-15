@@ -1,24 +1,4 @@
-## 《从零实现 KV 存储》课程已上线！
 
-使用 Rust 和 Go 构建一个完整的，支持 Redis 协议的 KV 存储引擎，硬核项目实战！
-
-课程详情：[使用 Rust 和 Go 从零实现 KV 存储](https://w02agegxg3.feishu.cn/docx/Ktp3dBGl9oHdbOxbjUWcGdSnn3g)
-
-***
-
-## 《从零实现分布式 KV》课程已上线！
-
-手写 raft + 分布式 KV 系统，硬核实战教程，深入理解分布式理论和实践必备！
-
-课程详情：[从零实现分布式 KV](https://av6huf2e1k.feishu.cn/docx/JCssdlgF4oRADcxxLqncPpRCn5b)
-
-***
-
-**下文中提到的学习资料 PDF 及数据库相关书籍，可在我公众号领取**，关注后回复关键字“**数据库**”
-
-![Snipaste_2023-02-01_09-58-05.png](https://cdn.nlark.com/yuque/0/2023/png/12925940/1675216713682-a3cab6f7-93ca-4699-999d-223ba77cbc97.png?x-oss-process=image%2Fresize%2Cw_1500%2Climit_0)
-
-***
 
 # 数据库/存储学习路径推荐
 
@@ -67,6 +47,42 @@ bitcask 可参考资料：
 
 **强烈推荐👍🏻**
 如果想要一个完整实现 KV 存储的代码实践教程，可以参考我的[《从零实现 KV 存储》](https://w02agegxg3.feishu.cn/docx/Ktp3dBGl9oHdbOxbjUWcGdSnn3g)的教程，从第一行代码开始的视频实战教程，使用 Go 和 Rust 两种语言分别实现。
+
+## 存储引擎
+
+存储引擎底层实现的方式主要包括但不限于以下几种：
+
+#### 1. B+Tree：
+
+B+Tree 是一种平衡树数据结构，广泛应用于数据库和文件系统的索引结构中。在数据库存储引擎中，如 MySQL 的 InnoDB 存储引擎，默认使用的就是基于 B+Tree 的索引结构。B+Tree 所有的叶子节点形成了一个有序链表，适合于区间查询和全表扫描，且由于所有数据都在叶子节点，每次查询只需要访问叶子节点，从而减少了磁盘I/O次数。
+
+#### 2. Hash：
+
+哈希存储引擎通常用于内存数据库或缓存系统，如 Redis 和 Memcached。哈希表允许通过哈希函数对键进行直接寻址，理论上提供 O(1) 的时间复杂度，适合于快速查找、插入和删除操作，但不支持范围查询和排序。
+
+#### 3. LSM-Tree（Log-Structured Merge Tree）：
+
+LSM-Tree 结构的存储引擎，如 LevelDB、RocksDB、Cassandra 等，适用于写入密集型场景。数据首先被写入内存中的数据结构（称为 memtable），当内存中的数据达到一定阈值时，会被刷入磁盘，并通过一系列合并操作来优化读取性能和磁盘空间利用率。
+
+#### 4. Bitmap / Roaring Bitmaps：
+
+位图索引在某些特定场景下非常高效，尤其是当索引的基数较低时，如统计某属性的各种状态时。Roaring Bitmaps 是位图的一种优化实现，能在内存中高效表示稀疏整数集合。
+
+#### 5. WAL（Write-Ahead Log）/Append-Only File：
+
+许多数据库存储引擎采用预写日志（WAL）机制来保证数据的持久化和一致性，例如 PostgreSQL 和 SQLite。数据先写入日志文件，然后再写入数据文件，以此降低数据丢失的风险，并支持崩溃恢复。
+
+#### 6. Log-Structured File System (LFS)：
+
+类似于 LSM-Tree，日志结构文件系统将写入操作作为日志记录，然后通过后台合并来优化读取性能，例如 Facebook 的 RocksDB 就采用 LFS 的思想。
+
+#### 7. Column-Oriented Storage：
+
+列式存储引擎将数据按列存储而非按行存储，适合于大数据分析场景，因为同列数据可以连续存储，从而大大提高了大数据量的批量查询效率，如 Apache Parquet、Cassandra 等。
+
+#### 8. 图存储引擎：
+
+图存储引擎用于存储和查询图结构数据，如 Neo4j 使用了特有的 Property Graph Model，并实现了一套专为图数据设计的索引结构。
 
 ## 事务/MVCC
 这部分网上的资料比较多，可以看看事务的一些基本概念 ACID，然后看看如何去实现的，可以借鉴其他数据库例如 MySQL、PostgreSQL，关于事务实现原理分析这方面的文章比较多。
